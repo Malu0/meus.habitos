@@ -409,8 +409,18 @@ function renderHabits(){
   checkConquests();
 }
 function toggleHabit(id){
-  if(state.todayDone[id]){delete state.todayDone[id];const h=state.habits.find(x=>x.id===id);if(h&&h.streak>0)h.streak--;}
-  else{state.todayDone[id]=true;const h=state.habits.find(x=>x.id===id);if(h)h.streak++;}
+  const key = todayKey;
+  if(!state.history) state.history = {};
+  if(!state.history[key]) state.history[key] = {};
+  if(state.todayDone[id]){
+    delete state.todayDone[id];
+    delete state.history[key][id];
+    const h=state.habits.find(x=>x.id===id);if(h&&h.streak>0)h.streak--;
+  } else {
+    state.todayDone[id]=true;
+    state.history[key][id]=true;
+    const h=state.habits.find(x=>x.id===id);if(h)h.streak++;
+  }
   save();renderHabits();
 }
 
@@ -433,11 +443,20 @@ function renderHabitFilter(){
 function setHabitFilter(id){selHabit=id;renderHabitFilter();renderHeatMap();renderHabitDetail();}
 
 function renderHeatMap(){
+  if(!state.history) state.history = {};
   document.getElementById('wlabels').innerHTML=WDAYS.map(d=>`<div class="day-lbl">${d}</div>`).join('');
-  const seed=selHabit==='geral'?0.5:(state.habits.findIndex(h=>String(h.id)===String(selHabit))+1)*0.15;
+  const now = new Date();
   document.getElementById('hgrid').innerHTML=Array.from({length:28},(_,i)=>{
-    const v=(Math.sin(i*0.7+seed*10)*0.5+0.5);
-    return `<div class="hcell${v>0.65?' full':v>0.35?' half':''}"></div>`;
+    const d = new Date(now); d.setDate(now.getDate() - (27 - i));
+    const k = d.toISOString().slice(0,10);
+    const dayData = state.history[k] || {};
+    const total = state.habits.length;
+    const done = Object.keys(dayData).length;
+    let cls = '';
+    if(total > 0 && done > 0){
+      cls = done >= total ? ' full' : ' half';
+    }
+    return `<div class="hcell${cls}" title="${k}"></div>`;
   }).join('');
   renderHabitDetail();
 }
@@ -471,15 +490,36 @@ function renderPerfectWeek(){
 
 let chartInst=null;
 function renderLineChart(){
+  if(!state.history) state.history = {};
   const ctx=document.getElementById('lc');
   if(chartInst)chartInst.destroy();
+  const now = new Date();
+  const total = state.habits.length || 1;
+  // calcular média diária de hábitos concluídos por semana (últimas 4 semanas)
+  const weekData = [0,0,0,0];
+  const weekCount = [0,0,0,0];
+  for(let i=0;i<28;i++){
+    const d = new Date(now); d.setDate(now.getDate() - (27 - i));
+    // só conta dias passados até hoje
+    if(d > now) continue;
+    const k = d.toISOString().slice(0,10);
+    const weekIdx = Math.floor(i/7);
+    const dayData = state.history[k] || {};
+    const done = selHabit==='geral'
+      ? Object.keys(dayData).length
+      : (dayData[selHabit] ? 1 : 0);
+    weekData[weekIdx] += done;
+    weekCount[weekIdx]++;
+  }
+  const data = weekData.map((v,i) => weekCount[i]>0 ? parseFloat((v/weekCount[i]).toFixed(1)) : 0);
+  const maxY = selHabit==='geral' ? Math.max(total, ...data, 1) : 1.2;
   chartInst=new Chart(ctx,{type:'line',data:{
     labels:['sem 1','sem 2','sem 3','sem 4'],
-    datasets:[{data:selHabit==='geral'?[2,4,3,Object.keys(state.todayDone).length]:[1,2,2,1],
+    datasets:[{data,
       borderColor:'#C4623A',backgroundColor:'rgba(196,98,58,0.08)',fill:true,tension:0.4,
       pointBackgroundColor:'#C4623A',pointRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{y:{min:0,grid:{color:'rgba(196,98,58,0.08)'},ticks:{color:'#8B5E4A',font:{size:10}}},
+      scales:{y:{min:0,max:Math.ceil(maxY)+0.5,grid:{color:'rgba(196,98,58,0.08)'},ticks:{color:'#8B5E4A',font:{size:10}}},
               x:{grid:{display:false},ticks:{color:'#8B5E4A',font:{size:10}}}}}});
 }
 
