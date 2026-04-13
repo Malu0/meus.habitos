@@ -74,11 +74,17 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;min-height
 .hf-btn.active{background:var(--tc1);color:white;border-color:var(--tc1);}
 
 /* heat map */
-.week-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
-.day-lbl{font-size:9px;color:var(--muted);text-align:center;}
-.heat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:1.2rem;}
-.hcell{aspect-ratio:1;border-radius:4px;background:var(--tc4);}
-.hcell.full{background:var(--tc1);}.hcell.half{background:var(--tc3);}
+.cal-month{margin-bottom:1.2rem;}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.cal-lbl{font-size:9px;color:var(--muted);text-align:center;font-weight:500;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{aspect-ratio:1;border-radius:6px;background:var(--tc4);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);}
+.cal-cell.empty{background:transparent;}
+.cal-cell.future{background:transparent;color:var(--tc4);}
+.cal-cell.today-cell{border:2px solid var(--tc1);color:var(--tc1);font-weight:600;background:transparent;}
+.cal-cell.half{background:var(--tc3);color:white;}
+.cal-cell.full{background:var(--tc1);color:white;}
+.cal-cell.full.today-cell{border:2px solid var(--tc6);}
 
 /* mood */
 .mood-row{display:flex;gap:5px;margin-bottom:1rem;}
@@ -114,24 +120,27 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;min-height
 .perf-day.today{border:2px solid var(--tc1);}
 
 /* stories */
-.stories-preview{background:linear-gradient(145deg,#3D1F12,#7A3520);border-radius:16px;padding:1.5rem;margin-bottom:1rem;color:white;min-height:220px;position:relative;overflow:hidden;}
-.stories-preview::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:rgba(196,98,58,0.2);}
-.stories-preview::after{content:'';position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(242,168,130,0.12);}
-.st-date{font-size:11px;opacity:0.6;margin-bottom:6px;}
-.st-title{font-family:var(--font-display);font-size:19px;font-weight:400;margin-bottom:3px;}
-.st-sub{font-size:12px;opacity:0.7;margin-bottom:1rem;}
-.st-habits{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;position:relative;z-index:1;}
-.st-hrow{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border-radius:8px;padding:7px 10px;}
-.st-hcheck{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
-.st-hcheck.yes{background:var(--tc2);}.st-hcheck.no{background:rgba(255,255,255,0.15);}
-.st-hname{font-size:12px;opacity:0.9;flex:1;}
+.stories-wrap{width:100%;max-width:360px;margin:0 auto 1rem;}
+.stories-preview{background:linear-gradient(160deg,#3D1F12 0%,#7A3520 55%,#C4623A 100%);border-radius:18px;padding:2rem 1.5rem 1.8rem;color:white;aspect-ratio:9/16;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;}
+.stories-preview::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(196,98,58,0.18);}
+.stories-preview::after{content:'';position:absolute;bottom:-50px;left:-30px;width:160px;height:160px;border-radius:50%;background:rgba(242,168,130,0.1);}
+.st-top{position:relative;z-index:1;}
+.st-date{font-size:11px;opacity:0.55;margin-bottom:8px;letter-spacing:0.05em;text-transform:uppercase;}
+.st-title{font-family:var(--font-display);font-size:22px;font-weight:400;line-height:1.2;margin-bottom:4px;}
+.st-sub{font-size:12px;opacity:0.65;}
+.st-middle{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:1.2rem 0;}
+.st-phrase{background:rgba(255,255,255,0.07);border-left:3px solid var(--tc3);border-radius:0 10px 10px 0;padding:10px 12px;font-size:13px;line-height:1.5;font-style:italic;opacity:0.9;margin-bottom:4px;}
+.st-hrow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;}
+.st-hcheck{width:18px;height:18px;border-radius:50%;background:var(--tc2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.st-hname{font-size:13px;flex:1;}
 .st-hstr{font-size:10px;opacity:0.5;}
-.st-bottom{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;}
-.st-score{font-family:var(--font-display);font-size:30px;}
-.st-tag{font-size:10px;opacity:0.5;margin-top:2px;}
-.st-badge{background:rgba(196,98,58,0.3);border-radius:8px;padding:7px 12px;text-align:center;}
-.st-badge-icon{font-size:19px;}
-.st-badge-lbl{font-size:9px;opacity:0.7;}
+.st-bottom{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;}
+.st-score{font-family:var(--font-display);font-size:38px;line-height:1;}
+.st-tag{font-size:10px;opacity:0.5;margin-top:3px;}
+.st-badge{background:rgba(196,98,58,0.3);border-radius:10px;padding:8px 14px;text-align:center;}
+.st-badge-icon{font-size:22px;}
+.st-badge-lbl{font-size:9px;opacity:0.7;margin-top:2px;}
+.st-empty{font-size:12px;opacity:0.6;text-align:center;padding:1rem 0;}
 
 /* billings */
 .cycle-info{background:var(--white);border:0.5px solid var(--tc4);border-radius:10px;padding:10px 12px;margin-bottom:1rem;display:flex;justify-content:space-between;box-shadow:var(--shadow);}
@@ -220,8 +229,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;min-height
     <div class="card" id="perf-week"></div>
     <div class="sec-title">constância por hábito</div>
     <div class="habit-filter" id="habit-filter"></div>
-    <div class="week-labels" id="wlabels"></div>
-    <div class="heat-grid" id="hgrid"></div>
+    <div class="cal-month" id="cal-month"></div>
     <div id="habit-stats-detail" style="margin-bottom:1rem;"></div>
     <div style="position:relative;width:100%;height:190px;">
       <canvas id="lc" role="img" aria-label="hábitos por semana"></canvas>
@@ -272,8 +280,15 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;min-height
 
   <!-- STORIES -->
   <div id="tab-stories" class="section">
+    <div class="sec-title">frase do dia</div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;">
+      <input id="st-phrase-input" placeholder="escreva uma frase motivacional..." style="flex:1;padding:9px 12px;border:0.5px solid var(--tc3);border-radius:8px;font-size:13px;color:var(--tc6);background:var(--white);font-family:var(--font-body);"/>
+      <button onclick="updateStoriesPhrase()" style="padding:9px 14px;background:var(--tc1);color:white;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font-body);white-space:nowrap;">atualizar</button>
+    </div>
     <div class="sec-title">preview do card</div>
-    <div class="stories-preview" id="stories-card"></div>
+    <div class="stories-wrap">
+      <div class="stories-preview" id="stories-card"></div>
+    </div>
     <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">tire um print desta tela para compartilhar nos stories</p>
   </div>
 
@@ -444,20 +459,34 @@ function setHabitFilter(id){selHabit=id;renderHabitFilter();renderHeatMap();rend
 
 function renderHeatMap(){
   if(!state.history) state.history = {};
-  document.getElementById('wlabels').innerHTML=WDAYS.map(d=>`<div class="day-lbl">${d}</div>`).join('');
   const now = new Date();
-  document.getElementById('hgrid').innerHTML=Array.from({length:28},(_,i)=>{
-    const d = new Date(now); d.setDate(now.getDate() - (27 - i));
-    const k = d.toISOString().slice(0,10);
-    const dayData = state.history[k] || {};
-    const total = state.habits.length;
-    const done = Object.keys(dayData).length;
+  const year = now.getFullYear(), month = now.getMonth();
+  const dim = new Date(year, month+1, 0).getDate();
+  const fdow = new Date(year, month, 1).getDay();
+  const mKey = `${year}-${String(month+1).padStart(2,'0')}`;
+  const total = state.habits.length || 1;
+
+  const header = WDAYS.map(d=>`<div class="cal-lbl">${d}</div>`).join('');
+  let cells = '';
+  for(let i=0;i<fdow;i++) cells += `<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const key = `${mKey}-${String(d).padStart(2,'0')}`;
+    const isToday = d === now.getDate();
+    const isFuture = d > now.getDate();
+    if(isFuture){ cells += `<div class="cal-cell future">${d}</div>`; continue; }
+    const dayData = state.history[key] || {};
+    let done = selHabit==='geral'
+      ? Object.keys(dayData).filter(id => state.habits.find(h=>String(h.id)===String(id))).length
+      : (dayData[selHabit] ? total : 0);
     let cls = '';
-    if(total > 0 && done > 0){
-      cls = done >= total ? ' full' : ' half';
-    }
-    return `<div class="hcell${cls}" title="${k}"></div>`;
-  }).join('');
+    if(done >= total && total > 0) cls = 'full';
+    else if(done > 0) cls = 'half';
+    if(isToday && !cls) cls = 'today-cell';
+    else if(isToday) cls += ' today-cell';
+    cells += `<div class="cal-cell ${cls}" title="${key}">${d}</div>`;
+  }
+  document.getElementById('cal-month').innerHTML =
+    `<div class="cal-header">${header}</div><div class="cal-grid">${cells}</div>`;
   renderHabitDetail();
 }
 
@@ -626,22 +655,33 @@ function saveBilDay(){
 
 // STORIES
 function renderStories(){
-  const total=state.habits.length,done=Object.keys(state.todayDone).length;
+  const total=state.habits.length;
+  const doneHabits=state.habits.filter(h=>state.todayDone[h.id]);
+  const done=doneHabits.length;
   const pct=total>0?Math.round(done/total*100):0;
   const dateStr=today.toLocaleDateString('pt-BR',{day:'numeric',month:'long'});
-  const moodTxt=selMood!==null?MOODS[selMood].e:'';
+  const moodTxt=selMood!==null?' '+MOODS[selMood].e:'';
+  const phrase=document.getElementById('st-phrase-input')?.value.trim()||'';
+  const phraseHtml=phrase?`<div class="st-phrase">${phrase}</div>`:'';
+  const habitsHtml=done>0
+    ? doneHabits.map(h=>`<div class="st-hrow"><div class="st-hcheck">✓</div><span class="st-hname">${h.emoji} ${h.name}</span><span class="st-hstr">🔥${h.streak}</span></div>`).join('')
+    : `<div class="st-empty">nenhum hábito concluído ainda hoje</div>`;
   document.getElementById('stories-card').innerHTML=`
-    <div class="st-date">${dateStr}</div>
-    <div class="st-title">meus hábitos de hoje ${moodTxt}</div>
-    <div class="st-sub">${done} de ${total} concluídos</div>
-    <div class="st-habits">${state.habits.map(h=>{const d=state.todayDone[h.id];
-      return `<div class="st-hrow"><div class="st-hcheck${d?' yes':' no'}">${d?'✓':''}</div><span class="st-hname">${h.emoji} ${h.name}</span><span class="st-hstr">🔥${h.streak}</span></div>`;
-    }).join('')}</div>
+    <div class="st-top">
+      <div class="st-date">${dateStr}</div>
+      <div class="st-title">meus hábitos${moodTxt}</div>
+      <div class="st-sub">${done} de ${total} concluídos hoje</div>
+    </div>
+    <div class="st-middle">
+      ${phraseHtml}
+      ${habitsHtml}
+    </div>
     <div class="st-bottom">
       <div><div class="st-score">${pct}%</div><div class="st-tag">consistência</div></div>
       <div class="st-badge"><div class="st-badge-icon">${pct===100?'🏆':pct>=50?'⚡':'🌱'}</div><div class="st-badge-lbl">${pct===100?'perfeito!':pct>=50?'no caminho':'começando'}</div></div>
     </div>`;
 }
+function updateStoriesPhrase(){ renderStories(); }
 
 // MODAIS
 function openModal(){
